@@ -149,13 +149,13 @@ void ExampleApp::onRenderGraphicsContext(const VRGraphicsState &renderState) {
     
     // compute rotation axis
     vec3 axis = normalize(cross(sdir, vec3(0,1,0)));
-
+    
     // Ccompute rotation angle
     float angle = -(length(sdir) / 1.0f);
 
     // Convert to rotation matrix
     mat4 rotation = mat4(1.0f);
-    if (length(axis) > 0.001) {
+    if (length(axis) > 0) { // if axis is 0 then we have an invalid axis that breaks the math
         rotation = rotate(mat4(1.0f), angle, axis);
     }
 
