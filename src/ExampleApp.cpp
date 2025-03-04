@@ -69,7 +69,6 @@ void ExampleApp::onButtonDown(const VRButtonEvent &event) {
         sphereFrame = mat4(1.0);
     }
 
-
 }
 
 void ExampleApp::onButtonUp(const VRButtonEvent &event) {
@@ -134,15 +133,34 @@ void ExampleApp::onRenderGraphicsContext(const VRGraphicsState &renderState) {
         
         sphere.reset(new Sphere(vec3(0.0), 1, vec4(1,0,0,1)));
         ground.reset(new GroundPlane(vec3(0, -1, 0), vec3(0, 1, 0)));
-
     }
     
     //TODO: Update the sphereFrame matrix to move the ball's position based on the dir variable.
-    //Make the ball rotate so that it looks like it is rolling on the table.
     
+    //VRVector3 operator*(const float s, const VRVector3& v);
+    //compute time differential
+    float rdt = (_curFrameTime - _lastTime) * 50; // i added the factor of 50 bc it was suer slow without it
     
+    //compute displacement
+    vec3 sdir = rdt * dir;
     
+    //create translation matrix
+    mat4 translation = translate(mat4(1.0f), sdir);
     
+    // compute rotation axis
+    vec3 axis = normalize(cross(sdir, vec3(0,1,0)));
+
+    // Ccompute rotation angle
+    float angle = -(length(sdir) / 1.0f);
+
+    // Convert to rotation matrix
+    mat4 rotation = mat4(1.0f);
+    if (length(axis) > 0.001) {
+        rotation = rotate(mat4(1.0f), angle, axis);
+    }
+
+    // Update sphere
+    sphereFrame = translation * sphereFrame * rotation;
     
 }
 
